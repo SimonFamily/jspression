@@ -1,1 +1,14 @@
-console.log("Hello!")
+export { LoxRunner } from './LoxRunner';
+export { LoxContext } from './loxContext';
+export { Environment } from './env/environment';
+export { DefaultEnvironment } from './env/defaultEnvironment';
+export { ExprInfo } from './ir/exprInfo';
+export { Expr } from './ir/expr';
+export { Parser } from './parser/parser';
+export { Field } from './field';
+export { TokenType } from './parser/tokenType';
+export { Value } from './values/value';
+export { Tracer } from './tracer';
+export { ExecuteMode } from './executeMode';
+export { FunctionManager } from './functions/functionManager'; 
+export { Function } from './functions/function';
