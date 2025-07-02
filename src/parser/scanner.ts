@@ -1,14 +1,7 @@
 import { Value } from "../values/value";
+import { LoxParseError } from "./parseError";
 import { Token } from "./token";
 import { TokenType } from "./tokenType";
-
-
-class LoxParseError extends Error {
-    constructor(public line: number, message: string) {
-        super(message);
-        this.name = "LoxParseError";
-    }
-}
 
 export class Scanner {
     private readonly keywords: Map<string, TokenType> = new Map([

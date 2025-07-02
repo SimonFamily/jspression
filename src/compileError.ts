@@ -1,4 +1,4 @@
-import { LoxException } from "./LoxException";
+import { LoxException } from "./loxException";
 import { Token } from "./parser/token";
 
 export class CompileError extends LoxException {

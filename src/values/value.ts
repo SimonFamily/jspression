@@ -1,5 +1,5 @@
 import { Instance } from "../instance";
-import { LoxException } from "../LoxException";
+import { LoxException } from "../loxException";
 import { ByteBuffer } from "../util/byteBuffer";
 import { ValueType } from "./valueType";
 
@@ -10,9 +10,9 @@ export class Value {
     constructor();
     constructor(v: number, isInteger?: boolean);
     constructor(v: string);
-    constructor(v: Instance);
     constructor(v: boolean);
-    constructor(v?: number | string | Instance | boolean, isInteger: boolean = false) {
+    constructor(v: Instance);
+    constructor(v?: number | string | boolean | Instance, isInteger: boolean = false) {
         if (v === undefined) {
             this.vt = ValueType.Null.value;
             this.v = null;

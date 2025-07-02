@@ -39,12 +39,6 @@ export class ConstantPool {
         const buffer = new ByteBuffer(this.constants.length * 8); // 初始分配大小
         
         for (const value of this.constants) {
-            if (buffer.remaining() < 80) { // 动态扩容
-                const newBuffer = new ByteBuffer(buffer.bufferLength * 2);
-                newBuffer.putBytes(buffer.toBytes());
-                buffer.copyFrom(newBuffer);
-            }
-            
             value.writeTo(buffer);
         }
         

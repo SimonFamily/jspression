@@ -1,4 +1,4 @@
-export { LoxRunner } from './LoxRunner';
+export { LoxRunner } from './loxRunner';
 export { LoxContext } from './loxContext';
 export { Environment } from './env/environment';
 export { DefaultEnvironment } from './env/defaultEnvironment';
