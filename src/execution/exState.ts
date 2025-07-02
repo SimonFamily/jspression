@@ -1,8 +1,8 @@
 export class ExState {
+    private static _mappings: Map<number, ExState> = new Map();
+    
     static readonly OK = new ExState(0);
     static readonly ERROR = new ExState(1);
-
-    private static _mappings: Map<number, ExState> = new Map();
 
     private constructor(public readonly value: number) {
         ExState._mappings.set(value, this);
@@ -25,7 +25,3 @@ export class ExState {
         }
     }
 }
-
-// 初始化映射
-ExState.OK;
-ExState.ERROR;

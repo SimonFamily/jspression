@@ -1,4 +1,6 @@
 export class OpCode {
+    private static _mappings: Map<number, OpCode> = new Map();
+
     static readonly OP_CONSTANT = new OpCode(0, "constant");
     static readonly OP_NULL = new OpCode(1, "null");
     static readonly OP_TRUE = new OpCode(2, "true");
@@ -33,8 +35,6 @@ export class OpCode {
     static readonly OP_RETURN = new OpCode(31, "return");
     static readonly OP_EXIT = new OpCode(32, "exit");
 
-    private static _mappings: Map<number, OpCode> = new Map();
-
     private constructor(
         public readonly code: number,
         public readonly title: string
@@ -58,38 +58,3 @@ export class OpCode {
         return `${this.title} (${this.code})`;
     }
 }
-
-// 初始化映射表（确保所有操作码被注册）
-OpCode.OP_CONSTANT;
-OpCode.OP_NULL;
-OpCode.OP_TRUE;
-OpCode.OP_FALSE;
-OpCode.OP_POP;
-OpCode.OP_GET_LOCAL;
-OpCode.OP_SET_LOCAL;
-OpCode.OP_GET_GLOBAL;
-OpCode.OP_DEFINE_GLOBAL;
-OpCode.OP_SET_GLOBAL;
-OpCode.OP_GET_PROPERTY;
-OpCode.OP_SET_PROPERTY;
-OpCode.OP_EQUAL_EQUAL;
-OpCode.OP_BANG_EQUAL;
-OpCode.OP_GREATER;
-OpCode.OP_GREATER_EQUAL;
-OpCode.OP_LESS;
-OpCode.OP_LESS_EQUAL;
-OpCode.OP_ADD;
-OpCode.OP_SUBTRACT;
-OpCode.OP_MULTIPLY;
-OpCode.OP_DIVIDE;
-OpCode.OP_MODE;
-OpCode.OP_POWER;
-OpCode.OP_NOT;
-OpCode.OP_NEGATE;
-OpCode.OP_JUMP;
-OpCode.OP_JUMP_IF_FALSE;
-OpCode.OP_CALL;
-OpCode.OP_BEGIN;
-OpCode.OP_END;
-OpCode.OP_RETURN;
-OpCode.OP_EXIT;

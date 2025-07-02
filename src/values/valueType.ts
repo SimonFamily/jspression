@@ -1,4 +1,6 @@
 export class ValueType {
+    private static _mappings: Map<number, ValueType> = new Map();
+
     static readonly Integer = new ValueType(1);
     static readonly Long = new ValueType(2);
     static readonly Float = new ValueType(3);
@@ -7,8 +9,6 @@ export class ValueType {
     static readonly Boolean = new ValueType(6);
     static readonly Instance = new ValueType(7);
     static readonly Null = new ValueType(8);
-
-    private static _mappings: Map<number, ValueType> = new Map();
 
     private constructor(public readonly value: number) {
         ValueType._mappings.set(value, this);
@@ -36,13 +36,3 @@ export class ValueType {
         }
     }
 }
-
-// 初始化映射表（确保所有值类型被注册）
-ValueType.Integer;
-ValueType.Long;
-ValueType.Float;
-ValueType.Double;
-ValueType.String;
-ValueType.Boolean;
-ValueType.Instance;
-ValueType.Null;

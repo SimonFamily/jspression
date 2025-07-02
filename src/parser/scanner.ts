@@ -136,23 +136,25 @@ export class Scanner {
         this.advance();
         
         // 提取字符串内容（去除引号）
-        const value = this.source.substring(this.start + 1, this.current - 1);
-        this.addToken(TokenType.STRING, value);
+        const str = this.source.substring(this.start + 1, this.current - 1);
+        this.addToken(TokenType.STRING, new Value(str));
     }
     
     private number(): void {
         while (this.isDigit(this.peek())) this.advance();
         
         // 处理小数部分
+        let isInteger = true;
         if (this.peek() === '.' && this.isDigit(this.peekNext())) {
             // 消费小数点
+            isInteger = false;
             this.advance();
             while (this.isDigit(this.peek())) this.advance();
         }
         
         const numText = this.source.substring(this.start, this.current);
-        const value = numText.includes('.') ? parseFloat(numText) : parseInt(numText);
-        this.addToken(TokenType.NUMBER, value);
+        const value = isInteger ? parseInt(numText) : parseFloat(numText);
+        this.addToken(TokenType.NUMBER, new Value(value, isInteger));
     }
     
     private identifier(): void {
@@ -189,7 +191,7 @@ export class Scanner {
         return this.current >= this.source.length;
     }
     
-    private addToken(type: TokenType, literal: any = null): void {
+    private addToken(type: TokenType, literal: Value = null): void {
         const text = this.source.substring(this.start, this.current);
         this.tokens.push(new Token(type, text, literal, this.line));
     }

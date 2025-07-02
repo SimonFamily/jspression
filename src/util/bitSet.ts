@@ -1,7 +1,6 @@
 export class BitSet {
     private words: number[] = [];
-    private static readonly ADDRESS_BITS_PER_WORD = 6; // 2^6 = 64
-    private static readonly BITS_PER_WORD = 1 << BitSet.ADDRESS_BITS_PER_WORD;
+    private static readonly BITS_PER_WORD = 64; // 每个字包含的位数（8个字节，64位）
 
     /**
      * 创建一个新的 BitSet
@@ -165,7 +164,8 @@ export class BitSet {
         const wordsRequired = wordIndex + 1;
         if (this.words.length < wordsRequired) {
             // 扩展数组并填充0
-            const newWords = new Array(wordsRequired).fill(0);
+            const request = Math.max(2 * this.words.length, wordsRequired);
+            const newWords = new Array(request).fill(0);
             for (let i = 0; i < this.words.length; i++) {
                 newWords[i] = this.words[i];
             }
