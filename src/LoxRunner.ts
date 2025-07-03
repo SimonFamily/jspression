@@ -15,7 +15,7 @@ import { Field } from "./field";
 
 export class LoxRunner {
     private needSort: boolean;
-    private executeMode: ExecuteMode = ExecuteMode.ChunkVM;
+    private executeMode: ExecuteMode = ExecuteMode.SyntaxTree;
     private context: LoxContext;
 
     constructor() {

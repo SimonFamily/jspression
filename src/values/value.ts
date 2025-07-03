@@ -176,7 +176,7 @@ export class Value {
         if (!(other instanceof Value)) return false;
         const o = other as Value;
         
-        if (this.vt !== o.vt) return false;
+        if (!this.isSameType(o)) return false;
         const valueType = this.getValueType();
         
         if (!valueType) return false;
@@ -194,5 +194,12 @@ export class Value {
             default:
                 return false;
         }
+    }
+
+    private isSameType(other: Value): boolean {
+        if (this.isNumber() && other.isNumber()) {
+            return true;
+        }
+        return this.vt === other.vt;
     }
 }
