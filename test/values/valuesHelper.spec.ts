@@ -2,8 +2,8 @@ import { ValuesHelper } from '../../src/values/valuesHelper';
 import { Value } from '../../src/values/value';
 import { TokenType } from '../../src/parser/tokenType';
 
-function v(val: any, isInt?: boolean) {
-  if (typeof val === 'number' && isInt) return new Value(val, true);
+function v(val: any, isInt: boolean = false) {
+  if (typeof val === 'number')  return new Value(val, isInt);
   return new Value(val);
 }
 

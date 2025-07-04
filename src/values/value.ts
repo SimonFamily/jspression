@@ -7,18 +7,37 @@ export class Value {
     private v: number | string | boolean | Instance | null;
     private vt: number;
 
-    constructor();
-    constructor(v: number, isInteger?: boolean);
-    constructor(v: string);
-    constructor(v: boolean);
-    constructor(v: Instance);
-    constructor(v?: number | string | boolean | Instance, isInteger: boolean = false) {
+    constructor(v?: number | string | boolean | Instance, isInteger?: boolean) {
         if (v === undefined) {
             this.vt = ValueType.Null.value;
             this.v = null;
         } else if (typeof v === 'number') {
-            this.v = v;
-            this.vt = isInteger ? ValueType.Integer.value : ValueType.Double.value;
+            if (Number.isNaN(v)) {
+                throw new LoxException(0, "Cannot create Value from NaN");
+            }
+            if (!Number.isFinite(v)) {
+                throw new LoxException(0, "Cannot create Value from Infinity or -Infinity");
+            }
+            // 大多数情况传递的数字是整数或浮点数程序可以自动判断，但对于7.0这种情况，js会将其视为整数
+            // 所以需要根据isInteger参数来判断是否强制转换为小数；
+            // 或者对于3.14这样的数字，也可通过这个参数来强制转换为整数
+            if (isInteger === undefined) {
+                if (Number.isInteger(v)) {
+                    this.vt = ValueType.Integer.value;
+                    this.v  = v;
+                } else {
+                    this.vt = ValueType.Double.value;
+                    this.v = v;
+                }
+            } else {
+                if (isInteger) {
+                    this.v = Math.trunc(v);
+                    this.vt = ValueType.Integer.value;
+                } else {
+                    this.v = v;
+                    this.vt = ValueType.Double.value;
+                }
+            }
         } else if (typeof v === 'string') {
             this.v = v;
             this.vt = ValueType.String.value;
@@ -176,7 +195,7 @@ export class Value {
         if (!(other instanceof Value)) return false;
         const o = other as Value;
         
-        if (!this.isSameType(o)) return false;
+        if (this.vt !== o.vt) return false;
         const valueType = this.getValueType();
         
         if (!valueType) return false;
@@ -194,12 +213,5 @@ export class Value {
             default:
                 return false;
         }
-    }
-
-    private isSameType(other: Value): boolean {
-        if (this.isNumber() && other.isNumber()) {
-            return true;
-        }
-        return this.vt === other.vt;
     }
 }
