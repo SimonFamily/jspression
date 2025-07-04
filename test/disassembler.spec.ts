@@ -23,7 +23,10 @@ describe('Disassembler', () => {
     const disassembler = new Disassembler(msg => res.push(msg));
     disassembler.execute(chunk);
 
-    expect(chunk.getByteSize()).toBe(445); // 编译后字节码的大小445字节
+    expect(chunk.getByteSize()).toBe(441); // 编译后字节码的大小445字节
+    expect(chunk.getCodesSize()).toBe(359) // 字节码指令的大小
+    expect(chunk.getConstsSize()).toBe(79) // 常量池的大小
+    expect(chunk.getVarsSize()).toBe(3) // 变量信息的大小
     expect(res.length).toBe(AssemblyContents.length);
     for (let i = 0; i < res.length; i++) {
       expect(res[i]).toBe(AssemblyContents[i]);

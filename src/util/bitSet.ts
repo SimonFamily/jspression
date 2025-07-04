@@ -1,190 +1,128 @@
+// 兼容 ES2015 的 BitSet，支持大 bitIndex，所有位操作分高低 32 位处理
+// 采用 {lo, hi} 结构模拟 64 位 word，所有位操作分高低 32 位处理
 export class BitSet {
-    private words: number[] = [];
-    private static readonly BITS_PER_WORD = 64; // 每个字包含的位数（8个字节，64位）
+    private words: { lo: number, hi: number }[] = [];
+    private static readonly BITS_PER_WORD = 64;
 
-    /**
-     * 创建一个新的 BitSet
-     * @param nbits 初始大小（可选）
-     */
     constructor(nbits: number = 0) {
         if (nbits > 0) {
-            this.words = new Array(this.wordIndex(nbits - 1) + 1).fill(0);
+            this.words = new Array(this.wordIndex(nbits - 1) + 1).fill(0).map(() => ({ lo: 0, hi: 0 }));
         }
     }
 
-    /**
-     * 从字节数组创建 BitSet（兼容 Java 的 BitSet.valueOf(byte[])）
-     * @param bytes 字节数组
-     * @returns 新的 BitSet 实例
-     */
     static valueOf(bytes: Uint8Array): BitSet {
         const bitSet = new BitSet();
-        
-        // 小端字节序处理（Java 兼容）
-        for (let i = 0; i < bytes.length; i++) {
-            const byte = bytes[i];
-            for (let j = 0; j < 8; j++) {
-                if ((byte & (1 << j))) {
-                    bitSet.set(i * 8 + j);
-                }
+        let wordIdx = 0;
+        for (let i = 0; i < bytes.length; i += 8) {
+            let lo = 0, hi = 0;
+            for (let j = 0; j < 4 && i + j < bytes.length; j++) {
+                lo |= bytes[i + j] << (8 * j);
+            }
+            for (let j = 0; j < 4 && i + 4 + j < bytes.length; j++) {
+                hi |= bytes[i + 4 + j] << (8 * j);
+            }
+            if (lo !== 0 || hi !== 0) {
+                bitSet.words[wordIdx++] = { lo: lo >>> 0, hi: hi >>> 0 };
             }
         }
-        
         return bitSet;
     }
 
-    /**
-     * 获取指定位的状态
-     * @param bitIndex 位索引
-     * @returns 如果位被设置返回 true，否则 false
-     */
     get(bitIndex: number): boolean {
-        if (bitIndex < 0) {
-            throw new Error(`bitIndex < 0: ${bitIndex}`);
-        }
-        
+        if (bitIndex < 0) throw new Error(`bitIndex < 0: ${bitIndex}`);
         const wordIndex = this.wordIndex(bitIndex);
-        return (wordIndex < this.words.length) && 
-               ((this.words[wordIndex] & (1 << (bitIndex % 64)))) !== 0;
+        if (wordIndex >= this.words.length) return false;
+        const { lo, hi } = this.words[wordIndex];
+        if (bitIndex % 64 < 32) {
+            return ((lo >>> (bitIndex % 32)) & 1) !== 0;
+        } else {
+            return ((hi >>> (bitIndex % 32)) & 1) !== 0;
+        }
     }
 
-    /**
-     * 设置指定位
-     * @param bitIndex 位索引
-     */
     set(bitIndex: number): void {
-        if (bitIndex < 0) {
-            throw new Error(`bitIndex < 0: ${bitIndex}`);
-        }
-        
+        if (bitIndex < 0) throw new Error(`bitIndex < 0: ${bitIndex}`);
         const wordIndex = this.wordIndex(bitIndex);
         this.expandTo(wordIndex);
-        
-        this.words[wordIndex] |= (1 << (bitIndex % 64));
+        if (bitIndex % 64 < 32) {
+            this.words[wordIndex].lo |= (1 << (bitIndex % 32));
+        } else {
+            this.words[wordIndex].hi |= (1 << (bitIndex % 32));
+        }
     }
 
-    /**
-     * 清除指定位
-     * @param bitIndex 位索引
-     */
     clear(bitIndex: number): void {
-        if (bitIndex < 0) {
-            throw new Error(`bitIndex < 0: ${bitIndex}`);
-        }
-        
+        if (bitIndex < 0) throw new Error(`bitIndex < 0: ${bitIndex}`);
         const wordIndex = this.wordIndex(bitIndex);
         if (wordIndex < this.words.length) {
-            this.words[wordIndex] &= ~(1 << (bitIndex % 64));
+            if (bitIndex % 64 < 32) {
+                this.words[wordIndex].lo &= ~(1 << (bitIndex % 32));
+            } else {
+                this.words[wordIndex].hi &= ~(1 << (bitIndex % 32));
+            }
         }
     }
 
-    /**
-     * 转换为字节数组（兼容 Java 的 BitSet.toByteArray()）
-     * @returns Uint8Array 字节数组
-     */
     toByteArray(): Uint8Array {
-        // 找到最高位设置的位置
-        let maxBit = -1;
-        for (let i = 0; i < this.words.length; i++) {
-            if (this.words[i] !== 0) {
-                maxBit = i * 64 + 63 - Math.clz32(this.words[i]);
+        // 找到最高 set 位的 word
+        let lastWord = this.words.length - 1;
+        while (lastWord >= 0 && this.words[lastWord].lo === 0 && this.words[lastWord].hi === 0) lastWord--;
+        if (lastWord < 0) return new Uint8Array(0);
+        const byteLen = (lastWord + 1) * 8;
+        const bytes = new Uint8Array(byteLen);
+        for (let i = 0; i <= lastWord; i++) {
+            let { lo, hi } = this.words[i];
+            for (let j = 0; j < 4; j++) {
+                bytes[i * 8 + j] = lo & 0xFF;
+                lo >>>= 8;
+            }
+            for (let j = 0; j < 4; j++) {
+                bytes[i * 8 + 4 + j] = hi & 0xFF;
+                hi >>>= 8;
             }
         }
-        
-        // 如果没有位被设置，返回空数组
-        if (maxBit === -1) {
-            return new Uint8Array(0);
-        }
-        
-        // 计算需要的字节数（向上取整）
-        const nBytes = Math.floor((maxBit + 8) / 8);
-        const bytes = new Uint8Array(nBytes);
-        
-        // 小端字节序填充（Java 兼容）
-        for (let i = 0; i < nBytes; i++) {
-            let byteValue = 0;
-            for (let j = 0; j < 8; j++) {
-                const bitIndex = i * 8 + j;
-                if (this.get(bitIndex)) {
-                    byteValue |= (1 << j);
-                }
-            }
-            bytes[i] = byteValue;
-        }
-        
-        return bytes;
+        // 去除末尾多余的 0 字节
+        let realLen = bytes.length;
+        while (realLen > 0 && bytes[realLen - 1] === 0) realLen--;
+        return bytes.slice(0, realLen);
     }
 
-    /**
-     * 返回位集合的长度（实际使用的位数）
-     * @returns 位数
-     */
     length(): number {
-        if (this.words.length === 0) return 0;
-        
-        // 找到最高位设置的位置
-        let lastWord = this.words[this.words.length - 1];
-        let hiBit = (this.words.length - 1) * 64;
-        
-        // 使用 Math.clz32 计算前导零的数量
-        hiBit += (32 - Math.clz32(lastWord));
-        return hiBit;
+        let lastWord = this.words.length - 1;
+        while (lastWord >= 0 && this.words[lastWord].lo === 0 && this.words[lastWord].hi === 0) lastWord--;
+        if (lastWord < 0) return 0;
+        const { lo, hi } = this.words[lastWord];
+        if (hi !== 0) {
+            return lastWord * 64 + 32 + 32 - Math.clz32(hi);
+        } else {
+            return lastWord * 64 + 32 - Math.clz32(lo);
+        }
     }
 
-    /**
-     * 返回实际使用的字数
-     * @returns 字数
-     */
     size(): number {
         return this.words.length;
     }
 
-    /**
-     * 检查位集合是否为空
-     * @returns 如果没有位被设置返回 true，否则 false
-     */
     isEmpty(): boolean {
-        return this.words.every(word => word === 0);
+        return this.words.every(word => word.lo === 0 && word.hi === 0);
     }
 
-    /**
-     * 计算指定位所在的字索引
-     * @param bitIndex 位索引
-     * @returns 字索引
-     */
     private wordIndex(bitIndex: number): number {
         return Math.floor(bitIndex / BitSet.BITS_PER_WORD);
     }
 
-    /**
-     * 扩展位集合到指定的字索引
-     * @param wordIndex 字索引
-     */
     private expandTo(wordIndex: number): void {
         const wordsRequired = wordIndex + 1;
-        if (this.words.length < wordsRequired) {
-            // 扩展数组并填充0
-            const request = Math.max(2 * this.words.length, wordsRequired);
-            const newWords = new Array(request).fill(0);
-            for (let i = 0; i < this.words.length; i++) {
-                newWords[i] = this.words[i];
-            }
-            this.words = newWords;
+        while (this.words.length < wordsRequired) {
+            this.words.push({ lo: 0, hi: 0 });
         }
     }
 
-    /**
-     * 返回位集合的字符串表示（二进制格式）
-     * @returns 二进制字符串
-     */
     toString(): string {
         if (this.isEmpty()) return "{}";
-        
         const result: string[] = [];
-        for (let i = 0; i <= this.length(); i++) {
-            if (this.get(i)) {
-                result.push(i.toString());
-            }
+        for (let i = 0; i < this.length(); i++) {
+            if (this.get(i)) result.push(i.toString());
         }
         return `{${result.join(", ")}}`;
     }

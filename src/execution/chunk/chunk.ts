@@ -14,4 +14,16 @@ export class Chunk {
     getByteSize(): number {
         return this.codes.length + this.constants.length + this.vars.length;
     }
+
+    getCodesSize(): number {
+        return this.codes.length;
+    }
+
+    getConstsSize(): number {
+        return this.constants.length;
+    }
+
+    getVarsSize(): number {
+        return this.vars.length;
+    }
 }
