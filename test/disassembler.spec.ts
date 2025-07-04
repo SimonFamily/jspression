@@ -23,6 +23,7 @@ describe('Disassembler', () => {
     const disassembler = new Disassembler(msg => res.push(msg));
     disassembler.execute(chunk);
 
+    expect(chunk.getByteSize()).toBe(445); // 编译后字节码的大小445字节
     expect(res.length).toBe(AssemblyContents.length);
     for (let i = 0; i < res.length; i++) {
       expect(res[i]).toBe(AssemblyContents[i]);
