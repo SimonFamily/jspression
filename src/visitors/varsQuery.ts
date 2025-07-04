@@ -11,6 +11,7 @@ import {
     GetExpr,
     SetExpr,
 } from "../ir/expr";
+import { Parser } from "../parser/parser";
 import { VariableSet } from "./variableSet";
 import { Visitor } from "./visitor";
 
@@ -24,6 +25,13 @@ export class VarsQuery implements Visitor<VariableSet> {
             results.push(this.execute(expr));
         }
         return results;
+    }
+
+    public executeSrc(src: string): VariableSet {
+        if (!src || src.trim() === "") return null; // 如果源代码为空或仅包含空格，返回null 
+        const p = new Parser(src);
+		const expr = p.parse();
+		return this.execute(expr);
     }
     
     public execute(expr: Expr): VariableSet {
@@ -85,11 +93,6 @@ export class VarsQuery implements Visitor<VariableSet> {
 
     public visitCall(expr: CallExpr): VariableSet | null {
         const result = new VariableSet();
-        
-        // 处理被调用表达式
-        const calleeVars = this.execute(expr.callee);
-        if (calleeVars) result.combine(calleeVars);
-        
         // 处理所有参数
         for (const arg of expr.args) {
             const argVars = this.execute(arg);
@@ -132,9 +135,6 @@ export class VarsQuery implements Visitor<VariableSet> {
             names.push(expr.name.lexeme);
             return;
         }
-        
-        // 处理其他可能的表达式类型
-        names.push("?");
     }
     
     public visitSet(expr: SetExpr): VariableSet | null {

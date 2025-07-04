@@ -20,6 +20,7 @@ import {
     SetExpr 
 } from '../ir/expr';
 import { Visitor } from './visitor';
+import { Parser } from '../parser/parser';
 
 // 表达式求值器
 export class Evaluator implements Visitor<Value> {
@@ -37,6 +38,13 @@ export class Evaluator implements Visitor<Value> {
             results.push(this.execute(expr));
         }
         return results;
+    }
+
+    public executeSrc(src: string): Value {
+        if (!src || src.trim() === "") return null; // 如果源代码为空或仅包含空格，返回null 
+        const p = new Parser(src);
+        const expr = p.parse();
+        return this.execute(expr);
     }
     
     public execute(expr: Expr): Value {

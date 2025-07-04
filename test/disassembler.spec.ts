@@ -5,14 +5,22 @@ import { Disassembler } from "../src/disassembler";
 describe('Disassembler', () => {
   it('should disassemble compiled source', () => {
     const lines: string[] = [
-      'a == 1 || b == 0 || c == 0'
-    ];
-
+      "a + b * c - 100 / 5 ** 2 ** 1",
+      "a + b * c >= 6",
+      "1 + 2 - 3",
+      "3 * (2 + 1)",
+      "a + (b - c)",
+      "a * 2 + (b - c)",
+      "x = y = a + b * c",
+      "a > 1 || b > 1 || c > 1 || d > 1",
+      "aa > 11 && bb > 11 && cc > 11 && dd > 11",
+    ]
     const runner = new LoxRunner();
     const chunk: Chunk = runner.compileSource(lines);
     let res: string[] = [];
     const disassembler = new Disassembler(msg => res.push(msg));
     disassembler.execute(chunk);
+    expect(res.length).toBe(108);
     //console.log(res.join(''));
   });
 });

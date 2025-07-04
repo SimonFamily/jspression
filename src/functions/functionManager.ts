@@ -1,12 +1,14 @@
 import { Function } from "./function";
+import { Abs } from "./num/abs";
+import { Clock } from "./sys/clock";
 
 export class FunctionManager {
     private static instance: FunctionManager;
     private functions: Map<string, Function> = new Map();
 
     private constructor() {
-        // this.registFunction(new Clock());
-        // this.registFunction(new Abs());
+        this.registFunction(new Clock());
+        this.registFunction(new Abs());
     }
 
     public static getInstance(): FunctionManager {

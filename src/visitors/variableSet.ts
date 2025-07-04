@@ -55,8 +55,8 @@ export class VariableSet {
     }
     
     public toString(): string {
-        const assignList = Array.from(this.assigns).join(",");
-        const dependList = Array.from(this.depends).join(",");
+        const assignList = Array.from(this.assigns).sort().join(",");
+        const dependList = Array.from(this.depends).sort().join(",");
         
         let result = "";
         if (assignList) {
