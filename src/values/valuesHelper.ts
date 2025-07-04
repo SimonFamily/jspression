@@ -1,4 +1,4 @@
-import { LoxRuntimeError } from "../loxRuntimeError";
+import { JpRuntimeError } from "../jpRuntimeError";
 import { TokenType } from "../parser/tokenType";
 import { Value } from "./value";
 
@@ -8,7 +8,7 @@ export class ValuesHelper {
             case TokenType.PLUS:
                 if ((!left.isNumber() && !left.isString()) || 
                     (!right.isNumber() && !right.isString())) {
-                    throw new LoxRuntimeError("Operands must be number or string.");
+                    throw new JpRuntimeError("Operands must be number or string.");
                 }
                 if (left.isString() || right.isString()) {
                     return new Value(left.toString() + right.toString());
@@ -39,7 +39,7 @@ export class ValuesHelper {
             case TokenType.SLASH:
                 this.checkNumberOperands(left, right);
                 if (right.isInteger() && right.asInteger() === 0) {
-                    throw new LoxRuntimeError("Division by zero.");
+                    throw new JpRuntimeError("Division by zero.");
                 }
                 if (left.isDouble() || right.isDouble()) {
                     return new Value(left.asDouble() / right.asDouble());
@@ -109,13 +109,13 @@ export class ValuesHelper {
         if (operand != null && operand.isNumber()) {
             return;
         }
-        throw new LoxRuntimeError("Operand must be a number.");
+        throw new JpRuntimeError("Operand must be a number.");
     }
 
     private static checkNumberOperands(left: Value, right: Value): void {
         if (left.isNumber() && right.isNumber()) {
             return;
         }
-        throw new LoxRuntimeError(`Operands must be numbers. left: ${left}, right: ${right}`);
+        throw new JpRuntimeError(`Operands must be numbers. left: ${left}, right: ${right}`);
     }
 }

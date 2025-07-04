@@ -1,6 +1,6 @@
-import { LoxRunner } from '../../src/loxRunner';
+import { JpRunner } from '../../src/jpRunner';
 import { DefaultEnvironment } from '../../src/env/defaultEnvironment';
-import { LoxParseError } from '../../src/parser/parseError';
+import { JpParseError } from '../../src/parser/jpParseError';
 
 describe('IfTest', () => {
     it('should handle basic if expression', () => {
@@ -8,7 +8,7 @@ describe('IfTest', () => {
         env.put('a', 1);
         env.put('b', 2);
         env.put('c', 3);
-        const runner = new LoxRunner();
+        const runner = new JpRunner();
         expect(runner.execute('if(a + b * c >= 6, 6 ** 2, -6 * 2)', env)).toBe(36.0);
         expect(runner.execute('if(a + b * c < 6, 6 ** 2, -6 * 2)', env)).toBe(-12);
         expect(runner.execute('if(a + b * c < 6, 6 ** 2)', env)).toBeNull();
@@ -17,7 +17,7 @@ describe('IfTest', () => {
 
     it('should handle nested expression', () => {
         const env = new DefaultEnvironment();
-        const runner = new LoxRunner();
+        const runner = new JpRunner();
         const str1 = 'if(score >= 85, "A", if(score >= 70, "B", if(score >= 60, "C", "D")))';
         const str2 = 'if(score >= 70, if(score < 85, "B","A"), if(score >= 60, "C", "D"))';
         env.put('score', 90);
@@ -37,7 +37,7 @@ describe('IfTest', () => {
         env.put('y1', 0);
         env.put('x2', 0);
         env.put('y2', 0);
-        const runner = new LoxRunner();
+        const runner = new JpRunner();
         expect(runner.execute('if(1 == 1, x1 = 1, y1 = 2)', env)).toBe(1);
         expect(env.get('x1')?.getValue()).toBe(1);
         expect(env.get('y1')?.getValue()).toBe(0);
@@ -51,9 +51,9 @@ describe('IfTest', () => {
         env.put('a', 1);
         env.put('b', 2);
         env.put('c', 3);
-        const runner = new LoxRunner();
-        expect(() => runner.execute('if()', env)).toThrow(LoxParseError);
-        expect(() => runner.execute('if(a + b * c >= 6)', env)).toThrow(LoxParseError);
-        expect(() => runner.execute('if(a + b * c >= 6,)', env)).toThrow(LoxParseError);
+        const runner = new JpRunner();
+        expect(() => runner.execute('if()', env)).toThrow(JpParseError);
+        expect(() => runner.execute('if(a + b * c >= 6)', env)).toThrow(JpParseError);
+        expect(() => runner.execute('if(a + b * c >= 6,)', env)).toThrow(JpParseError);
     });
 });

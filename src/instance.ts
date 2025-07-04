@@ -1,6 +1,6 @@
 import { Clazz } from "./clazz";
 import { Value } from "./values/value";
-import { LoxRuntimeError } from "./loxRuntimeError";
+import { JpRuntimeError } from "./jpRuntimeError";
 
 export class Instance {
     private clazz: Clazz | null = null;
@@ -18,7 +18,7 @@ export class Instance {
         if (this.fields.has(name)) {
             return this.fields.get(name)!; // 非空断言，因为已检查存在
         }
-        throw new LoxRuntimeError(`Undefined property '${name}'.`);
+        throw new JpRuntimeError(`Undefined property '${name}'.`);
     }
 
     public set(name: string, value: Value): void {

@@ -1,7 +1,7 @@
 import { Token } from "./parser/token";
 import { TokenType } from "./parser/tokenType";
 
-export class LoxException extends Error {
+export class JpException extends Error {
     constructor(line: number, where: string, message: string);
     constructor(line: number, message: string);
     constructor(token: Token, message: string);
@@ -10,13 +10,13 @@ export class LoxException extends Error {
         
         if (typeof arg1 === "number" && arg3) {
             // (line, where, message) 形式
-            message = LoxException.errMsg(arg1, arg2 || "", arg3);
+            message = JpException.errMsg(arg1, arg2 || "", arg3);
         } else if (typeof arg1 === "number") {
             // (line, message) 形式
-            message = LoxException.errMsg(arg1, "", arg2 || "");
+            message = JpException.errMsg(arg1, "", arg2 || "");
         } else {
             // (token, message) 形式
-            message = LoxException.errMsg(arg1, arg2 || "");
+            message = JpException.errMsg(arg1, arg2 || "");
         }
         
         super(message);
@@ -29,9 +29,9 @@ export class LoxException extends Error {
             const token = arg1;
             const message = arg2;
             if (token.type === TokenType.EOF) {
-                return LoxException.errMsg(token.line, " at end", message);
+                return JpException.errMsg(token.line, " at end", message);
             } else {
-                return LoxException.errMsg(token.line, ` at '${token.lexeme}'`, message);
+                return JpException.errMsg(token.line, ` at '${token.lexeme}'`, message);
             }
         } else {
             const line = arg1;

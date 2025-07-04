@@ -1,5 +1,5 @@
 import { Value } from "../values/value";
-import { LoxParseError } from "./parseError";
+import { JpParseError } from "./jpParseError";
 import { Token } from "./token";
 import { TokenType } from "./tokenType";
 
@@ -81,11 +81,11 @@ export class Scanner {
             // 逻辑运算符
             case '|': 
                 if (this.match('|')) this.addToken(TokenType.OR);
-                else throw new LoxParseError(this.line, `Unknown character: ${c}`);
+                else throw new JpParseError(this.line, `Unknown character: ${c}`);
                 break;
             case '&': 
                 if (this.match('&')) this.addToken(TokenType.AND);
-                else throw new LoxParseError(this.line, `Unknown character: ${c}`);
+                else throw new JpParseError(this.line, `Unknown character: ${c}`);
                 break;
                 
             // 空白字符
@@ -109,7 +109,7 @@ export class Scanner {
                 } else if (this.isAlpha(c)) {
                     this.identifier();
                 } else {
-                    throw new LoxParseError(this.line, `Unknown character: ${c}`);
+                    throw new JpParseError(this.line, `Unknown character: ${c}`);
                 }
                 break;
         }
@@ -122,7 +122,7 @@ export class Scanner {
         }
         
         if (this.isEnd()) {
-            throw new LoxParseError(this.line, "Unterminated string.");
+            throw new JpParseError(this.line, "Unterminated string.");
         }
         
         // 闭合引号

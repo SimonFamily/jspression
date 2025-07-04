@@ -1,5 +1,5 @@
 import { Chunk } from "../../src/execution/chunk/chunk";
-import { LoxRunner } from "../../src/loxRunner";
+import { JpRunner } from "../../src/jpRunner";
 import { CustomEnvironment } from "./customEnvironment";
 
 describe('CustomEnvTest', () => {
@@ -17,7 +17,7 @@ describe('CustomEnvTest', () => {
       '标题10'
     ];
     const env = new CustomEnvironment('formId1');
-    const runner = new LoxRunner();
+    const runner = new JpRunner();
     const r = runner.executeBatch(lines, env) as any[];
     checkResult(r);
   });
@@ -35,10 +35,10 @@ describe('CustomEnvTest', () => {
       '标题9',
       '标题10'
     ];
-    let runner = new LoxRunner();
+    let runner = new JpRunner();
     const chunk: Chunk = runner.compileSource(lines);
     const env = new CustomEnvironment('formId1');
-    runner = new LoxRunner();
+    runner = new JpRunner();
     const r = runner.runChunk(chunk, env) as any[];
     checkResult(r);
   });

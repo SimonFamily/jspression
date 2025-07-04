@@ -1,5 +1,5 @@
 import { ExecuteMode } from "./executeMode";
-import { LoxContext } from "./loxContext";
+import { JpContext } from "./jpContext";
 import { Environment } from "./env/environment";
 import { DefaultEnvironment } from "./env/defaultEnvironment";
 import { ExprInfo } from "./ir/exprInfo";
@@ -13,14 +13,14 @@ import { OpCodeCompiler } from "./visitors/opCodeCompiler";
 import { ExprSorter } from "./ir/exprSorter";
 import { Field } from "./field";
 
-export class LoxRunner {
+export class JpRunner {
     private needSort: boolean;
     private executeMode: ExecuteMode = ExecuteMode.SyntaxTree;
-    private context: LoxContext;
+    private context: JpContext;
 
     constructor() {
         this.needSort = true;
-        this.context = new LoxContext();
+        this.context = new JpContext();
     }
 
     public isNeedSort(): boolean {

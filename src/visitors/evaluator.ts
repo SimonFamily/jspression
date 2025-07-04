@@ -2,7 +2,7 @@ import { Environment } from '../env/environment';
 import { Value } from '../values/value';
 import { ValuesHelper } from '../values/valuesHelper';
 import { TokenType } from '../parser/tokenType';
-import { LoxRuntimeError } from '../loxRuntimeError';
+import { JpRuntimeError } from '../jpRuntimeError';
 import { Function } from '../functions/function';
 import { FunctionManager } from '../functions/functionManager';
 import { Token } from '../parser/token';
@@ -92,7 +92,7 @@ export class Evaluator implements Visitor<Value> {
             this.env.putValue(idExpr.id, right);
             return right;
         }
-        throw new LoxRuntimeError("Invalid assignment target");
+        throw new JpRuntimeError("Invalid assignment target");
     }
     
     visitCall(expr: CallExpr): Value {
@@ -102,12 +102,12 @@ export class Evaluator implements Visitor<Value> {
         if (callee instanceof IdExpr) {
             functionName = (callee as IdExpr).id;
         } else {
-            throw new LoxRuntimeError(expr.rParen, "Can only call named functions");
+            throw new JpRuntimeError(expr.rParen, "Can only call named functions");
         }
         
         const func = FunctionManager.getInstance().getFunction(functionName);
         if (!func) {
-            throw new LoxRuntimeError(expr.rParen, `Function not found: ${functionName}`);
+            throw new JpRuntimeError(expr.rParen, `Function not found: ${functionName}`);
         }
         
         // 执行所有参数表达式
@@ -118,7 +118,7 @@ export class Evaluator implements Visitor<Value> {
         
         // 检查参数数量
         if (args.length !== func.arity()) {
-            throw new LoxRuntimeError(
+            throw new JpRuntimeError(
                 expr.rParen,
                 `Expected ${func.arity()} arguments but got ${args.length}.`
             );
@@ -142,13 +142,13 @@ export class Evaluator implements Visitor<Value> {
         if (object.isInstance()) {
             return object.asInstance().get(expr.name.lexeme);
         }
-        throw new LoxRuntimeError(expr.name, "Only instances have properties.");
+        throw new JpRuntimeError(expr.name, "Only instances have properties.");
     }
     
     visitSet(expr: SetExpr): Value {
         const object = this.execute(expr.object);
         if (!object.isInstance()) {
-            throw new LoxRuntimeError(expr.name, "Only instances have fields.");
+            throw new JpRuntimeError(expr.name, "Only instances have fields.");
         }
 
         const value = this.execute(expr.value);

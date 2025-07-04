@@ -1,8 +1,8 @@
 import { Const } from '../const';
-import { Function as LoxFunction } from '../function';
+import { Function } from '../function';
 import { Value } from '../../values/value';
 
-export class Clock extends LoxFunction {
+export class Clock extends Function {
   constructor() {
     super('clock', '当前毫秒数', Const.SYSTEM_GROUP);
   }

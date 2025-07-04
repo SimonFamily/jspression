@@ -2,7 +2,7 @@ import { Tracer } from "./tracer";
 import { ExecuteContext } from "./ir/executeContext";
 import { ExprInfo } from "./ir/exprInfo";
 
-export class LoxContext {
+export class JpContext {
     private readonly tracer: Tracer;
     private readonly execContext: ExecuteContext;
 

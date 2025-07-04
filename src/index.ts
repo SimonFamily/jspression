@@ -1,5 +1,5 @@
-export { LoxRunner } from './loxRunner';
-export { LoxContext } from './loxContext';
+export { JpRunner  } from './jpRunner';
+export { JpContext } from './jpContext';
 export { Environment } from './env/environment';
 export { DefaultEnvironment } from './env/defaultEnvironment';
 export { ExprInfo } from './ir/exprInfo';

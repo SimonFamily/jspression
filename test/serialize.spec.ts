@@ -1,4 +1,4 @@
-import { LoxRunner } from '../src/loxRunner';
+import { JpRunner } from '../src/jpRunner';
 import { DefaultEnvironment } from '../src/env/defaultEnvironment';
 import { Environment } from '../src/env/environment';
 import { Expr } from '../src/ir/expr';
@@ -20,7 +20,7 @@ function chunkSerializeTest() {
   const lines = createFormulas();
   console.log('表达式总数：' + lines.length);
 
-  const runner = new LoxRunner();
+  const runner = new JpRunner();
 
   console.log('开始解析和分析：');
   let start = Date.now();

@@ -1,5 +1,5 @@
 import { Instance } from "../instance";
-import { LoxException } from "../loxException";
+import { JpException } from "../jpException";
 import { ByteBuffer } from "../util/byteBuffer";
 import { ValueType } from "./valueType";
 
@@ -13,10 +13,10 @@ export class Value {
             this.v = null;
         } else if (typeof v === 'number') {
             if (Number.isNaN(v)) {
-                throw new LoxException(0, "Cannot create Value from NaN");
+                throw new JpException(0, "Cannot create Value from NaN");
             }
             if (!Number.isFinite(v)) {
-                throw new LoxException(0, "Cannot create Value from Infinity or -Infinity");
+                throw new JpException(0, "Cannot create Value from Infinity or -Infinity");
             }
             // 大多数情况传递的数字是整数或浮点数程序可以自动判断，但对于7.0这种情况，js会将其视为整数
             // 所以需要根据isInteger参数来判断是否强制转换为小数；
@@ -65,7 +65,7 @@ export class Value {
     static getFrom(buffer: ByteBuffer): Value {
         const tag = buffer.get();
         const type = ValueType.valueOf(tag);
-        if (!type) throw new LoxException(0, `Unknown value type tag: ${tag}`);
+        if (!type) throw new JpException(0, `Unknown value type tag: ${tag}`);
 
         switch (type) {
             case ValueType.Integer:
@@ -79,13 +79,13 @@ export class Value {
                 const s = new TextDecoder().decode(bytes);
                 return new Value(s);
             default:
-                throw new LoxException(0, `Unsupported type: ${type}`);
+                throw new JpException(0, `Unsupported type: ${type}`);
         }
     }
 
     getByteSize(): number {
         const type = this.getValueType();
-        if (!type) throw new LoxException(0, "Unknown value type");
+        if (!type) throw new JpException(0, "Unknown value type");
 
         switch (type) {
             case ValueType.Integer:
@@ -95,17 +95,17 @@ export class Value {
             case ValueType.String:
                 const bytes = new TextEncoder().encode(this.asString());
                 if (bytes.length > 32767) {
-                    throw new LoxException(0, `String exceeds max length: ${bytes.length}`);
+                    throw new JpException(0, `String exceeds max length: ${bytes.length}`);
                 }
                 return bytes.length + 3; // 1 byte tag + 2 byte length
             default:
-                throw new LoxException(0, `Unsupported type: ${type}`);
+                throw new JpException(0, `Unsupported type: ${type}`);
         }
     }
 
     writeTo(buffer: ByteBuffer): void {
         const type = this.getValueType();
-        if (!type) throw new LoxException(0, "Unknown value type");
+        if (!type) throw new JpException(0, "Unknown value type");
 
         switch (type) {
             case ValueType.Integer:
@@ -123,7 +123,7 @@ export class Value {
                 buffer.putBytes(bytes);
                 break;
             default:
-                throw new LoxException(0, `Unsupported type: ${type}`);
+                throw new JpException(0, `Unsupported type: ${type}`);
         }
     }
 

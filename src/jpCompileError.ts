@@ -1,7 +1,7 @@
-import { LoxException } from "./loxException";
+import { JpException } from "./jpException";
 import { Token } from "./parser/token";
 
-export class CompileError extends LoxException {
+export class JpCompileError extends JpException {
     constructor(line: number, message: string);
     constructor(token: Token, message: string);
     constructor(arg1: number | Token, arg2: string) {

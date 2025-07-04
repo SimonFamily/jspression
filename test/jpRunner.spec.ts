@@ -1,10 +1,10 @@
-import { LoxRunner } from '../src/loxRunner';
+import { JpRunner } from '../src/jpRunner';
 import { DefaultEnvironment } from '../src/env/defaultEnvironment';
 import { Environment } from '../src/env/environment';
 
-describe('LoxRunnerTest', () => {
+describe('JpRunnerTest', () => {
   it('should handle basic numerical expressions', () => {
-    const runner = new LoxRunner();
+    const runner = new JpRunner();
     expect(runner.execute('1 + 2 - 3')).toBe(0);
     expect(runner.execute('1 + 2 * 3')).toBe(7);
     expect(runner.execute('3 * (2 + 1)')).toBe(9);
@@ -15,7 +15,7 @@ describe('LoxRunnerTest', () => {
 
   it('should handle assignment expression with variables', () => {
     const env: Environment = new DefaultEnvironment();
-    const runner = new LoxRunner();
+    const runner = new JpRunner();
     env.put('a', 1);
     env.put('b', 2);
     env.put('c', 3);
@@ -29,7 +29,7 @@ describe('LoxRunnerTest', () => {
     env.put('a', 1);
     env.put('b', 2);
     env.put('c', 3);
-    const runner = new LoxRunner();
+    const runner = new JpRunner();
     let r = runner.execute('a + b * c - 100 / 5 ** 2 ** 1', env);
     expect(r).toBe(3.0);
 
@@ -52,7 +52,7 @@ describe('LoxRunnerTest', () => {
       'x = y = a + b * c'
     ];
 
-    const runner = new LoxRunner();
+    const runner = new JpRunner();
     const r = runner.executeBatch(lines, env) as any[];
     expect(r[0]).toBe(3.0);
     expect(r[1]).toBe(true);
@@ -73,7 +73,7 @@ describe('LoxRunnerTest', () => {
       'c = n + w'
     ];
 
-    const runner = new LoxRunner();
+    const runner = new JpRunner();
     const env: Environment = new DefaultEnvironment();
     env.put('m', 2);
     env.put('n', 4);

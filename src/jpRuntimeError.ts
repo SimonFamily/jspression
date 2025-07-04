@@ -1,7 +1,7 @@
 import { Token } from "./parser/token";
 import { TokenType } from "./parser/tokenType";
 
-export class LoxRuntimeError extends Error {
+export class JpRuntimeError extends Error {
     public readonly token: Token | null;
 
     constructor(message: string);
@@ -20,7 +20,7 @@ export class LoxRuntimeError extends Error {
         }
 
         super(message);
-        this.name = "LoxRuntimeError";
+        this.name = "JpRuntimeError";
         this.token = token;
     }
 

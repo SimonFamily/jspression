@@ -1,4 +1,4 @@
-import { LoxRunner } from '../src/loxRunner';
+import { JpRunner } from '../src/jpRunner';
 import { DefaultEnvironment } from '../src/env/defaultEnvironment';
 import { Environment } from '../src/env/environment';
 import { ExecuteMode } from '../src/executeMode';
@@ -11,7 +11,7 @@ describe('BatchRunnerTest', () => {
   it('should execute expressions by interpreting syntax tree', () => {
     console.log('批量运算测试(解析执行)');
     const lines = getExpressions();
-    const runner = new LoxRunner();
+    const runner = new JpRunner();
     runner.setExecuteMode(ExecuteMode.SyntaxTree);
     runner.setTrace(true);
     const env = getEnv();
@@ -24,7 +24,7 @@ describe('BatchRunnerTest', () => {
     console.log('批量运算测试(编译+字节码执行)');
     const start = Date.now();
     const lines = getExpressions();
-    const runner = new LoxRunner();
+    const runner = new JpRunner();
     runner.setTrace(true);
     const chunk: Chunk = runner.compileSource(lines);
     const env = getEnv();
@@ -45,7 +45,7 @@ describe('BatchRunnerTest', () => {
     const chunk: Chunk = deserializeObject(getPath(Directory, 'Chunks.ser'));
     console.log('完成从文件反序列化字节码。' + ' 耗时(ms):' + (Date.now() - start));
 
-    const runner = new LoxRunner();
+    const runner = new JpRunner();
     runner.setTrace(true);
     const env = getEnv();
     runner.runChunk(chunk, env);

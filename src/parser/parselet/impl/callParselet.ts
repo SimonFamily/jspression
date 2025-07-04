@@ -1,5 +1,5 @@
 import { CallExpr, Expr } from "../../../ir/expr";
-import { LoxParseError } from "../../parseError";
+import { JpParseError } from "../../jpParseError";
 import { Parser } from "../../parser";
 import { Precedence } from "../../precedence";
 import { Token } from "../../token";
@@ -20,7 +20,7 @@ export class CallParselet implements InfixParselet {
         if (!parser.check(TokenType.RIGHT_PAREN)) {
             do {
                 if (argCount >= 255) {
-                    throw new LoxParseError(parser.peek(), "Can't have more than 255 arguments.");
+                    throw new JpParseError(parser.peek(), "Can't have more than 255 arguments.");
                 }
                 const arg = parser.expressionPrec(Precedence.PREC_NONE);
                 args.push(arg);

@@ -1,4 +1,4 @@
-import { CompileError } from "../../compileError";
+import { JpCompileError } from "../../jpCompileError";
 import { Tracer } from "../../tracer";
 import { ByteBuffer } from "../../util/byteBuffer";
 import { Value } from "../../values/value";
@@ -93,7 +93,7 @@ export class ConstantPool {
             case ValueType.Boolean:
                 break;
             default:
-                throw new CompileError(0, `常量池中暂不支持此类型：${type}`);
+                throw new JpCompileError(0, `常量池中暂不支持此类型：${type}`);
         }
     }
 }

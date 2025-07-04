@@ -16,7 +16,7 @@ import { AssignParselet } from './parselet/impl/assignParselet';
 import { LogicParselet } from './parselet/impl/logicParselet';
 import { CallParselet } from './parselet/impl/callParselet';
 import { GetParselet } from './parselet/impl/getParselet';
-import { LoxParseError } from './parseError';
+import { JpParseError } from './jpParseError';
 
 export class Parser {
     private static readonly prefixParselets: Map<TokenType, PrefixParselet> = new Map();
@@ -65,7 +65,7 @@ export class Parser {
     public parse(): Expr {
         const result = this.expressionPrec(Precedence.PREC_NONE);
         if (this.peek().type !== TokenType.EOF) {
-            throw new LoxParseError(this.peek(), `Unknown token: ${this.peek().lexeme}`);
+            throw new JpParseError(this.peek(), `Unknown token: ${this.peek().lexeme}`);
         }
         return result;
     }
@@ -80,7 +80,7 @@ export class Parser {
         const prefixParselet = Parser.prefixParselets.get(token.type);
         
         if (!prefixParselet) {
-            throw new LoxParseError(token, `Unknown token: ${token.lexeme}`);
+            throw new JpParseError(token, `Unknown token: ${token.lexeme}`);
         }
         
         let lhs: Expr = prefixParselet.parse(this, token);
@@ -117,7 +117,7 @@ export class Parser {
         if (this.check(expected)) {
             return this.advance();
         }
-        throw new LoxParseError(this.peek(), message);
+        throw new JpParseError(this.peek(), message);
     }
 
     public advance(): Token {

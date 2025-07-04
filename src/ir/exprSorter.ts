@@ -1,5 +1,5 @@
-import { LoxContext } from "../loxContext";
-import { LoxRuntimeError } from "../loxRuntimeError";
+import { JpContext } from "../jpContext";
+import { JpRuntimeError } from "../jpRuntimeError";
 import { Digraph } from "../util/digraph";
 import { Node } from "../util/node";
 import { NodeSet } from "../util/nodeSet";
@@ -9,9 +9,9 @@ import { ExprInfo } from "./exprInfo";
 export class ExprSorter {
     private nodeSet: NodeSet<ExprInfo> | null;
     private graph: Digraph | null;
-    private context: LoxContext;
+    private context: JpContext;
     
-    constructor(context: LoxContext) {
+    constructor(context: JpContext) {
         this.context = context;
         this.nodeSet = context.getExecContext().getNodeSet();
         this.graph = context.getExecContext().getGraph();
@@ -28,7 +28,7 @@ export class ExprSorter {
         
         if (!hasOrder) {
             this.printCircle(); // 可选：打印循环引用信息
-            throw new LoxRuntimeError("公式列表存在循环引用！");
+            throw new JpRuntimeError("公式列表存在循环引用！");
         }
         
         const nodeOrders = topSorter.getOrders();

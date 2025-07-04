@@ -1,6 +1,6 @@
 import { Environment } from "../env/environment";
 import { FunctionManager } from "../functions/functionManager";
-import { LoxRuntimeError } from "../loxRuntimeError";
+import { JpRuntimeError } from "../jpRuntimeError";
 import { TokenType } from "../parser/tokenType";
 import { Tracer } from "../tracer";
 import { Value } from "../values/value";
@@ -35,28 +35,28 @@ export class VM {
 
     private push(value: Value): void {
         if (this.stackTop >= VM.STACK_MAX) {
-            throw new LoxRuntimeError("Stack overflow");
+            throw new JpRuntimeError("Stack overflow");
         }
         this.stack[this.stackTop++] = value;
     }
 
     private pop(): Value {
         if (this.stackTop <= 0) {
-            throw new LoxRuntimeError("Stack underflow");
+            throw new JpRuntimeError("Stack underflow");
         }
         return this.stack[--this.stackTop];
     }
 
     private peek(): Value {
         if (this.stackTop <= 0) {
-            throw new LoxRuntimeError("Stack underflow");
+            throw new JpRuntimeError("Stack underflow");
         }
         return this.stack[this.stackTop - 1];
     }
 
     private peekAt(distance: number): Value {
         if (this.stackTop - 1 - distance < 0) {
-            throw new LoxRuntimeError("Invalid stack access");
+            throw new JpRuntimeError("Invalid stack access");
         }
         return this.stack[this.stackTop - 1 - distance];
     }
@@ -124,7 +124,7 @@ export class VM {
                         const name = this.readString();
                         const object = this.pop();
                         if (object === null || !object.isInstance()) {
-                            throw new LoxRuntimeError(`Only instances have properties. error: ${name}`);
+                            throw new JpRuntimeError(`Only instances have properties. error: ${name}`);
                         }
                         this.push(object.asInstance().get(name));
                         break;
@@ -134,7 +134,7 @@ export class VM {
                         const name = this.readString();
                         const object = this.pop();
                         if (object === null || !object.isInstance()) {
-                            throw new LoxRuntimeError(`Only instances have properties. error: ${name}`);
+                            throw new JpRuntimeError(`Only instances have properties. error: ${name}`);
                         }
                         const value = this.peek();
                         if (value !== null) {
@@ -227,16 +227,16 @@ export class VM {
                     case OpCode.OP_EXIT:
                         this.tracer.endTimer("虚拟机运行结束");
                         if (this.stackTop !== 0) {
-                            throw new LoxRuntimeError(`虚拟机状态异常，栈顶位置为：${this.stackTop}`);
+                            throw new JpRuntimeError(`虚拟机状态异常，栈顶位置为：${this.stackTop}`);
                         }
                         return result;
                     
                     default:
-                        throw new LoxRuntimeError(`暂不支持的指令：${op.getTitle()}`);
+                        throw new JpRuntimeError(`暂不支持的指令：${op.getTitle()}`);
                 }
             } catch (e) {
                 this.tracer.endTimer("虚拟机运行异常终止");
-                if (e instanceof LoxRuntimeError) {
+                if (e instanceof JpRuntimeError) {
                     // 创建错误结果
                     const errorResult = new ExResult(null, ExState.ERROR);
                     errorResult.setIndex(expOrder);
@@ -303,7 +303,7 @@ export class VM {
         const a = this.pop();
         
         if (a === null || b === null) {
-            throw new LoxRuntimeError("Operands cannot be null");
+            throw new JpRuntimeError("Operands cannot be null");
         }
         
         const result = ValuesHelper.binaryOperate(a, b, type);
@@ -314,7 +314,7 @@ export class VM {
         const operand = this.pop();
         
         if (operand === null) {
-            throw new LoxRuntimeError("Operand cannot be null");
+            throw new JpRuntimeError("Operand cannot be null");
         }
         
         const result = ValuesHelper.preUnaryOperate(operand, type);
@@ -324,7 +324,7 @@ export class VM {
     private readString(): string {
         const value = this.readConstant();
         if (value === null || !value.isString()) {
-            throw new LoxRuntimeError("Expected string constant");
+            throw new JpRuntimeError("Expected string constant");
         }
         return value.asString();
     }
@@ -332,7 +332,7 @@ export class VM {
     private readConstant(): Value | null {
         const index = this.readInt();
         if (!this.chunkReader) {
-            throw new LoxRuntimeError("No active chunk reader");
+            throw new JpRuntimeError("No active chunk reader");
         }
         return this.chunkReader.readConst(index);
     }
@@ -341,28 +341,28 @@ export class VM {
         const code = this.readByte();
         const opCode = OpCode.forValue(code);
         if (!opCode) {
-            throw new LoxRuntimeError(`Unknown opcode: ${code}`);
+            throw new JpRuntimeError(`Unknown opcode: ${code}`);
         }
         return opCode;
     }
 
     private readByte(): number {
         if (!this.chunkReader) {
-            throw new LoxRuntimeError("No active chunk reader");
+            throw new JpRuntimeError("No active chunk reader");
         }
         return this.chunkReader.readByte();
     }
     
     private readInt(): number {
         if (!this.chunkReader) {
-            throw new LoxRuntimeError("No active chunk reader");
+            throw new JpRuntimeError("No active chunk reader");
         }
         return this.chunkReader.readInt();
     }
     
     private gotoOffset(offset: number): void {
         if (!this.chunkReader) {
-            throw new LoxRuntimeError("No active chunk reader");
+            throw new JpRuntimeError("No active chunk reader");
         }
         const curPos = this.chunkReader.position();
         this.chunkReader.newPosition(curPos + offset);

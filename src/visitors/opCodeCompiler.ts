@@ -4,7 +4,7 @@ import { OpCode } from "../execution/opCode";
 import { FunctionManager } from "../functions/functionManager";
 import { AssignExpr, BinaryExpr, CallExpr, Expr, GetExpr, IdExpr, IfExpr, LiteralExpr, LogicExpr, SetExpr, UnaryExpr } from "../ir/expr";
 import { ExprInfo } from "../ir/exprInfo";
-import { LoxRuntimeError } from "../loxRuntimeError";
+import { JpRuntimeError } from "../jpRuntimeError";
 import { TokenType } from "../parser/tokenType";
 import { Tracer } from "../tracer";
 import { Value } from "../values/value";
@@ -153,10 +153,10 @@ export class OpCodeCompiler implements Visitor<void> {
         const name = idExpr?.id ?? "";
         const func = FunctionManager.getInstance().getFunction(name);
         if (!func) {
-            throw new LoxRuntimeError(expr.rParen, `Function undefined: ${name}`);
+            throw new JpRuntimeError(expr.rParen, `Function undefined: ${name}`);
         }
         if (expr.args.length !== func.arity()) {
-            throw new LoxRuntimeError(
+            throw new JpRuntimeError(
                 expr.rParen,
                 `Expected ${func.arity()} arguments but got ${expr.args.length}.`
             );

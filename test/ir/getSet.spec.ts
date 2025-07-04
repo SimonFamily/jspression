@@ -1,5 +1,5 @@
 import { Instance } from '../../src/instance';
-import { LoxRunner } from '../../src/loxRunner';
+import { JpRunner } from '../../src/jpRunner';
 import { DefaultEnvironment } from '../../src/env/defaultEnvironment';
 import { Value } from '../../src/values/value';
 
@@ -14,11 +14,14 @@ describe('GetSetTest', () => {
         env.put('t1', t1);
         env.put('t2', t2);
 
-        const runner = new LoxRunner();
+        const runner = new JpRunner();
         const lines: string[] = [];
         lines.push('t1.x = t1.a + t2.b * t2.c + m');
         lines.push('m = t1.a + t2.b * t2.c');
         const r = runner.executeBatch(lines, env);
+        if (!r || r.length !== 2) {
+            throw new Error('Expected two results from executeBatch');
+        }
 
         expect(env.get('m')?.getValue()).toBe(7);
         expect(env.get('t1')?.asInstance().get('x').asInteger()).toBe(14);

@@ -1,4 +1,4 @@
-import { LoxContext } from "../loxContext";
+import { JpContext } from "../jpContext";
 import { Digraph } from "../util/digraph";
 import { Node } from "../util/node";
 import { NodeSet } from "../util/nodeSet";
@@ -8,9 +8,9 @@ export class ExecuteContext {
     private exprInfos: ExprInfo[] = [];
     private nodeSet: NodeSet<ExprInfo> | null = null;
     private graph: Digraph | null = null;
-    private global: LoxContext;
+    private global: JpContext;
     
-    constructor(global: LoxContext) {
+    constructor(global: JpContext) {
         this.global = global;
     }
 

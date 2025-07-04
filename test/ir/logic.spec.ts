@@ -1,4 +1,4 @@
-import { LoxRunner } from '../../src/loxRunner';
+import { JpRunner } from '../../src/jpRunner';
 import { DefaultEnvironment } from '../../src/env/defaultEnvironment';
 
 describe('LogicTest', () => {
@@ -7,7 +7,7 @@ describe('LogicTest', () => {
         env.put('a', 1);
         env.put('b', 2);
         env.put('c', 3);
-        const runner = new LoxRunner();
+        const runner = new JpRunner();
         expect(runner.execute('a == 1 || b == 0 || c == 0', env)).toBe(true);
         expect(runner.execute('a == 0 || b == 2 || c == 0', env)).toBe(true);
         expect(runner.execute('a == 0 || b == 0 || c == 3', env)).toBe(true);

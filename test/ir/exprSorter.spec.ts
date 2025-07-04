@@ -1,7 +1,7 @@
 import { Expr } from '../../src/ir/expr';
 import { ExprInfo } from '../../src/ir/exprInfo';
-import { LoxContext } from '../../src/loxContext';
-import { LoxRunner } from '../../src/loxRunner';
+import { JpContext } from '../../src/jpContext';
+import { JpRunner } from '../../src/jpRunner';
 import { DefaultEnvironment } from '../../src/env/defaultEnvironment';
 import { Environment } from '../../src/env/environment';
 import { ExprSorter } from '../../src/ir/exprSorter';
@@ -14,8 +14,8 @@ describe('ExprSorterTest', () => {
     srcs.push('b = a * 2');
     srcs.push('c = n + w + b');
 
-    const context = new LoxContext();
-    let runner = new LoxRunner();
+    const context = new JpContext();
+    let runner = new JpRunner();
     const exprs: Expr[] = runner.parse(srcs);
     let exprInfos: ExprInfo[] | null = runner.analyze(exprs);
     context.prepareExecute(exprInfos);
@@ -30,7 +30,7 @@ describe('ExprSorterTest', () => {
     expect(srcs[exprInfos[2].getIndex()]).toBe('c = n + w + b');
     expect(srcs[exprInfos[3].getIndex()]).toBe('x = y = a + b * c');
 
-    runner = new LoxRunner();
+    runner = new JpRunner();
     const env: Environment = new DefaultEnvironment();
     env.put('m', 2);
     env.put('n', 4);
@@ -52,7 +52,7 @@ describe('ExprSorterTest', () => {
     srcs.push('b = a * 2');
     srcs.push('c = n + w + b');
 
-    let runner = new LoxRunner();
+    let runner = new JpRunner();
     const exprs: Expr[] = runner.parse(srcs);
     const exprInfos: ExprInfo[] = runner.analyze(exprs);
     expect(exprInfos && exprInfos.length === 6).toBeTruthy();
@@ -63,7 +63,7 @@ describe('ExprSorterTest', () => {
     expect(srcs[exprInfos[4].getIndex()]).toBe('b * 2 + 1');
     expect(srcs[exprInfos[5].getIndex()]).toBe('a * b + c');
 
-    runner = new LoxRunner();
+    runner = new JpRunner();
     const env: Environment = new DefaultEnvironment();
     env.put('m', 2);
     env.put('n', 4);
