@@ -1,9 +1,10 @@
 import { Chunk } from "../src/execution/chunk/chunk";
 import { LoxRunner } from "../src/loxRunner";
 import { Disassembler } from "../src/disassembler";
+import { AssemblyContents } from "./resource/assemblyContent";
 
 describe('Disassembler', () => {
-  it('should disassemble compiled source', () => {
+  it('should disassemble byte codes', () => {
     const lines: string[] = [
       "a + b * c - 100 / 5 ** 2 ** 1",
       "a + b * c >= 6",
@@ -15,12 +16,19 @@ describe('Disassembler', () => {
       "a > 1 || b > 1 || c > 1 || d > 1",
       "aa > 11 && bb > 11 && cc > 11 && dd > 11",
     ]
+
     const runner = new LoxRunner();
     const chunk: Chunk = runner.compileSource(lines);
     let res: string[] = [];
     const disassembler = new Disassembler(msg => res.push(msg));
     disassembler.execute(chunk);
-    expect(res.length).toBe(108);
-    //console.log(res.join(''));
+
+    expect(res.length).toBe(AssemblyContents.length);
+    for (let i = 0; i < res.length; i++) {
+      expect(res[i]).toBe(AssemblyContents[i]);
+    }
+    
+    // const str = JSON.stringify(res);
+    // console.log(str);
   });
 });
