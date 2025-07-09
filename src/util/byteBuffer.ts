@@ -83,6 +83,15 @@ export class ByteBuffer {
         return this.buffer[this._position++];
     }
 
+    getBytes(length: number): Uint8Array {
+        if (this._position + length > this._capacity) {
+            throw new Error("Buffer underflow");
+        }
+        const bytes = this.buffer.slice(this._position, this._position + length);
+        this._position += length;
+        return bytes;
+    }
+
     getShort(): number {
         if (this._position + 2 > this._capacity) {
             throw new Error("Buffer underflow");

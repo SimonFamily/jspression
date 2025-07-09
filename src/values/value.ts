@@ -74,8 +74,7 @@ export class Value {
                 return new Value(buffer.getDouble());
             case ValueType.String:
                 const len = buffer.getShort();
-                const bytes = new Uint8Array(len);
-                for (let i = 0; i < len; i++) bytes[i] = buffer.get();
+                const bytes = buffer.getBytes(len);
                 const s = new TextDecoder().decode(bytes);
                 return new Value(s);
             default:
