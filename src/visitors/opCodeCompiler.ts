@@ -45,7 +45,9 @@ export class OpCodeCompiler implements Visitor<void> {
 
     public endCompile(): Chunk {
         this.emitOp(OpCode.OP_EXIT);
-        this.chunkWriter.setVariables(new Array(...this.varSet));
+        const vars: string[] = []
+        for (var name of this.varSet) vars.push(name)
+        this.chunkWriter.setVariables(vars);
         return this.chunkWriter.flush();
     }
 
