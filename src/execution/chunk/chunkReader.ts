@@ -49,6 +49,7 @@ export class ChunkReader {
     }
 
     getVariables(): string[] {
+        this.tracer.startTimer()
         const values = this.constPool.getAllConsts();
         const result: string[] = [];
         
@@ -57,6 +58,7 @@ export class ChunkReader {
                 result.push(values[i].toString());
             }
         }
+        this.tracer.endTimer("构造变量列表")
         return result;
     }
 
