@@ -34,15 +34,15 @@ describe('BatchRunnerTest', () => {
     console.log('==========');
 
     // 模拟序列化
-    const fileName = 'Chunks.ser';
+    const fileName = 'Chunks.pb';
     const path = getPath(Directory, fileName);
-    serializeObject(chunk, path);
+    writeChunkFile(chunk, path);
   });
 
   it('should execute expression chunk directly', () => {
     console.log('批量运算测试(字节码直接执行)');
     const start = Date.now();
-    const chunk: Chunk = deserializeObject(getPath(Directory, 'Chunks.ser'));
+    const chunk: Chunk = readChunkFile(getPath(Directory, 'Chunks.pb'));
     console.log('完成从文件反序列化字节码。' + ' 耗时(ms):' + (Date.now() - start));
 
     const runner = new JpRunner();
@@ -102,13 +102,15 @@ function getPath(dir: string, fileName: string): string {
   return `${dir}/${fileName}`;
 }
 
-function serializeObject(obj: any, path: string): void {
+function writeChunkFile(chunk: Chunk, path: string): void {
   // 这里仅做模拟，实际应写入文件
+  const bytes = chunk.toBytes();
   (globalThis as any).__chunk_cache__ = (globalThis as any).__chunk_cache__ || {};
-  (globalThis as any).__chunk_cache__[path] = obj;
+  (globalThis as any).__chunk_cache__[path] = bytes;
 }
 
-function deserializeObject(path: string): any {
+function readChunkFile(path: string): Chunk {
   // 这里仅做模拟，实际应从文件读取
-  return (globalThis as any).__chunk_cache__?.[path];
+  const bytes = (globalThis as any).__chunk_cache__?.[path];
+  return Chunk.valueOf(bytes);
 }

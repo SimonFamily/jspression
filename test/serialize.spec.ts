@@ -33,13 +33,13 @@ function chunkSerializeTest() {
 
   console.log('开始进行字节码序列化反序列化，字节码大小(KB)：' + (chunk.getByteSize() / 1024));
   start = Date.now();
-  const fileName = 'Chunks.ser';
+  const fileName = 'Chunks.pb';
   const path = getPath(Directory, fileName);
-  serializeObject(chunk, path);
+  writeChunkFile(chunk, path);
   console.log('字节码已序列化到文件：' + fileName + ' 耗时(ms):' + (Date.now() - start));
 
   start = Date.now();
-  chunk = deserializeObject(path);
+  chunk = readChunkFile(path);
   console.log('完成从文件反序列化字节码。' + ' 耗时(ms):' + (Date.now() - start));
 
   console.log('开始执行字节码：');
@@ -114,15 +114,17 @@ function getPath(directory: string, fileName: string): string {
   return `.temp/${directory}/${fileName}`;
 }
 
-function serializeObject(obj: any, path: string): void {
+function writeChunkFile(chunk: Chunk, path: string): void {
   // 这里只做内存模拟，实际项目可用 fs.writeFileSync/JSON.stringify 或二进制序列化
+  const bytes = chunk.toBytes();
   (globalThis as any).__chunk_cache__ = (globalThis as any).__chunk_cache__ || {};
-  (globalThis as any).__chunk_cache__[path] = obj;
+  (globalThis as any).__chunk_cache__[path] = bytes;
 }
 
-function deserializeObject(path: string): any {
+function readChunkFile(path: string): Chunk {
   // 这里只做内存模拟，实际项目可用 fs.readFileSync/JSON.parse 或二进制反序列化
-  return (globalThis as any).__chunk_cache__?.[path];
+  const bytes = (globalThis as any).__chunk_cache__?.[path];
+  return Chunk.valueOf(bytes);
 }
 
 // 可选：模拟写字符串到文件
