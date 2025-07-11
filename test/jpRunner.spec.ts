@@ -11,6 +11,7 @@ describe('JpRunnerTest', () => {
     expect(runner.execute('1 + 2 * 3 ** 2 ** 1')).toBe(19.0);
     expect(runner.execute('3 * (2 + 1.0)')).toBe(9.0);
     expect(runner.execute('3 * (2 + 1.0) > 7')).toBe(true);
+    expect(runner.execute('1000 + 100.0 * 99 - (600 - 3 * 15) / (((68 - 9) - 3) * 2 - 100) + 10000 % 7 * 71')).toBe(11138)
   });
 
   it('should handle assignment expression with variables', () => {

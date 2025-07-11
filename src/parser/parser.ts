@@ -33,7 +33,7 @@ export class Parser {
         
         Parser.infixParselets.set(TokenType.PLUS, new BinaryParselet(Precedence.PREC_TERM));
         Parser.infixParselets.set(TokenType.MINUS, new BinaryParselet(Precedence.PREC_TERM));
-        Parser.infixParselets.set(TokenType.PERCENT, new BinaryParselet(Precedence.PREC_MODE));
+        Parser.infixParselets.set(TokenType.PERCENT, new BinaryParselet(Precedence.PREC_FACTOR));
         Parser.infixParselets.set(TokenType.STAR, new BinaryParselet(Precedence.PREC_FACTOR));
         Parser.infixParselets.set(TokenType.SLASH, new BinaryParselet(Precedence.PREC_FACTOR));
         Parser.infixParselets.set(TokenType.STARSTAR, new BinaryParselet(Precedence.PREC_POWER, true));
