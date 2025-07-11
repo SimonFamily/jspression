@@ -14,7 +14,7 @@ export class ValuesHelper {
                     return new Value(left.toString() + right.toString());
                 } else {
                     if (left.isDouble() || right.isDouble()) {
-                        return new Value(left.asDouble() + right.asDouble());
+                        return new Value(left.asDouble() + right.asDouble(), false);
                     } else {
                         return new Value(left.asInteger() + right.asInteger());
                     }
@@ -23,7 +23,7 @@ export class ValuesHelper {
             case TokenType.MINUS:
                 this.checkNumberOperands(left, right);
                 if (left.isDouble() || right.isDouble()) {
-                    return new Value(left.asDouble() - right.asDouble());
+                    return new Value(left.asDouble() - right.asDouble(), false);
                 } else {
                     return new Value(left.asInteger() - right.asInteger());
                 }
@@ -31,7 +31,7 @@ export class ValuesHelper {
             case TokenType.STAR:
                 this.checkNumberOperands(left, right);
                 if (left.isDouble() || right.isDouble()) {
-                    return new Value(left.asDouble() * right.asDouble());
+                    return new Value(left.asDouble() * right.asDouble(), false);
                 } else {
                     return new Value(left.asInteger() * right.asInteger());
                 }
@@ -42,7 +42,7 @@ export class ValuesHelper {
                     throw new JpRuntimeError("Division by zero.");
                 }
                 if (left.isDouble() || right.isDouble()) {
-                    return new Value(left.asDouble() / right.asDouble());
+                    return new Value(left.asDouble() / right.asDouble(), false);
                 } else {
                     return new Value(Math.trunc(left.asInteger() / right.asInteger()));
                 }
@@ -50,14 +50,14 @@ export class ValuesHelper {
             case TokenType.PERCENT:
                 this.checkNumberOperands(left, right);
                 if (left.isDouble() || right.isDouble()) {
-                    return new Value(left.asDouble() % right.asDouble());
+                    return new Value(left.asDouble() % right.asDouble(), false);
                 } else {
                     return new Value(left.asInteger() % right.asInteger());
                 }
                 
             case TokenType.STARSTAR:
                 this.checkNumberOperands(left, right);
-                return new Value(Math.pow(left.asDouble(), right.asDouble()));
+                return new Value(Math.pow(left.asDouble(), right.asDouble()), false);
                 
             case TokenType.GREATER:
                 this.checkNumberOperands(left, right);
@@ -97,7 +97,7 @@ export class ValuesHelper {
                 if (operand.isInteger()) {
                     return new Value(-operand.asInteger());
                 } else {
-                    return new Value(-operand.asDouble());
+                    return new Value(-operand.asDouble(), false);
                 }
                 
             default:

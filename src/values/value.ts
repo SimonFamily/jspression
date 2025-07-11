@@ -71,7 +71,7 @@ export class Value {
             case ValueType.Integer:
                 return new Value(buffer.getInt(), true);
             case ValueType.Double:
-                return new Value(buffer.getDouble());
+                return new Value(buffer.getDouble(), false);
             case ValueType.String:
                 const len = buffer.getShort();
                 const bytes = buffer.getBytes(len);
@@ -187,7 +187,12 @@ export class Value {
     }
 
     toString(): string {
-        return this.v === null ? "null" : String(this.v);
+        if (this.v === null) return "null"
+        let r = String(this.v)
+        if (this.isDouble() && Number.isInteger(this.v)) {
+            r = r + ".0"
+        }
+        return r
     }
 
     equals(other: any): boolean {
