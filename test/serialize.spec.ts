@@ -6,37 +6,38 @@ import { ExprInfo } from '../src/ir/exprInfo';
 import { Chunk } from '../src/execution/chunk/chunk';
 
 const FORMULA_BATCHES = 1000;
-const RUN_BATCHES = 1;
 const Directory = 'SerializeTest';
 
 describe('SerializeTest', () => {
-  it('chunkSerializeTest', () => {
-    console.log('序列化反序列化测试：');
-    chunkSerializeTest();
-  });
-});
-
-function chunkSerializeTest() {
+  console.log('序列化反序列化测试：');
   const lines = createFormulas();
   console.log('表达式总数：' + lines.length);
-
   const runner = new JpRunner();
-
   console.log('开始解析和分析：');
   let start = Date.now();
   const exprs: Expr[] = runner.parse(lines);
   let exprInfos: ExprInfo[] = runner.analyze(exprs);
   console.log('中间结果生成完成。' + ' 耗时(ms):' + (Date.now() - start));
-
-  runner.setTrace(true);
   let chunk: Chunk = runner.compileIR(exprInfos);
+  const env = getEnvironment()
 
+  it('chunkSerializeTest', () => {
+    chunkTest(chunk, env)
+    console.log('==========')
+  });
+
+  it('SyntaxTreeSerializeTest', () => {
+    syntaxTreeTest(exprInfos, env)
+    console.log('==========')
+  });
+});
+
+function chunkTest(chunk: Chunk, env: Environment) {
   console.log('开始进行字节码序列化反序列化，字节码大小(KB)：' + (chunk.getByteSize() / 1024));
-  start = Date.now();
-  const fileName = 'Chunks.pb';
-  const path = getPath(Directory, fileName);
+  let start = Date.now();
+  const path = getPath(Directory, 'Chunks.pb');
   writeChunkFile(chunk, path);
-  console.log('字节码已序列化到文件：' + fileName + ' 耗时(ms):' + (Date.now() - start));
+  console.log('字节码已序列化到文件。耗时(ms):' + (Date.now() - start));
 
   start = Date.now();
   chunk = readChunkFile(path);
@@ -44,26 +45,22 @@ function chunkSerializeTest() {
 
   console.log('开始执行字节码：');
   start = Date.now();
-  let env: Environment = getEnvironment();
-  for (let i = 0; i < RUN_BATCHES; i++) {
-    runner.runChunk(chunk, env);
-  }
+  const runner = new JpRunner();
+  runner.runChunk(chunk, env);
   checkResult(env);
   console.log('字节码执行完成。' + ' 耗时(ms):' + (Date.now() - start));
+}
+
+function syntaxTreeTest(exprInfos: ExprInfo[], env: Environment) {
+  // todo 序列化语法树
+	// todo反序列化语法树
 
   console.log('开始执行语法树');
-  start = Date.now();
-  env = getEnvironment();
-  for (let i = 0; i < RUN_BATCHES; i++) {
-    runner.runIR(exprInfos, env);
-  }
+  let start = Date.now();
+  const runner = new JpRunner();
+  runner.runIR(exprInfos, env);
   checkResult(env);
   console.log('语法树执行完成。' + ' 耗时(ms):' + (Date.now() - start));
-
-  // 可选：json序列化
-  // const json = JSON.stringify(chunk);
-  // writeString(json, getPath(Directory, 'Chunks.json'));
-  console.log('==========');
 }
 
 function createFormulas(): string[] {

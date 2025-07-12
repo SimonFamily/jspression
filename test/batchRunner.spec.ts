@@ -32,27 +32,40 @@ describe('BatchRunnerTest', () => {
     checkValues(env);
     console.log('总耗时(ms)：' + (Date.now() - start));
     console.log('==========');
-
-    // 模拟序列化
-    const fileName = 'Chunks.pb';
-    const path = getPath(Directory, fileName);
-    writeChunkFile(chunk, path);
   });
 
   it('should execute expression chunk directly', () => {
-    console.log('批量运算测试(字节码直接执行)');
-    const start = Date.now();
-    const chunk: Chunk = readChunkFile(getPath(Directory, 'Chunks.pb'));
-    console.log('完成从文件反序列化字节码。' + ' 耗时(ms):' + (Date.now() - start));
-
-    const runner = new JpRunner();
-    runner.setTrace(true);
-    const env = getEnv();
-    runner.runChunk(chunk, env);
-    checkValues(env);
+    console.log('字节码编译到文件再从文件读取执行');
+    const filePath = getPath(Directory, 'Chunks.pb')
+    const chunk: Chunk = createAndGetChunk(filePath);
+    const start = Date.now(), cnt = 1;
+    for (let i = 0; i < cnt; i++) {
+      const runner = new JpRunner();
+      const env = getEnv();
+      runner.runChunk(chunk, env);
+      checkValues(env);
+    }
+    console.log(`"执行完成，执行次数：${cnt}。 总耗时${Date.now() - start}ms:"`)
     console.log('==========');
   });
 });
+
+function createAndGetChunk(path: string) {
+  const lines = getExpressions();
+  const runner = new JpRunner();
+  let start = Date.now();
+  let chunk: Chunk = runner.compileSource(lines);
+  console.log('编译完成，耗时(ms)：' + (Date.now() - start));
+
+  start = Date.now();
+  writeChunkFile(chunk, path);
+  console.log('序列化到文件完成，耗时(ms)：' + (Date.now() - start));
+
+  start = Date.now();
+  chunk = readChunkFile(path);
+  console.log('从文件反序列化完成，耗时(ms)：' + (Date.now() - start));
+  return chunk
+}
 
 function getExpressions(): string[] {
   const lines: string[] = [];
